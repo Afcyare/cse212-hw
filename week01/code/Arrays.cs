@@ -13,7 +13,17 @@ public static class Arrays
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
 
-        return []; // replace this return statement with your own
+        // Step 2: create the array
+        double[] result = new double[length];
+
+        // Step 3: fill the array with multiples
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = number * (i + 1); // 1st multiple is number*1, 2nd is number*2, etc.
+        }
+
+        // Step 4: return the array
+        return result;
     }
 
     /// <summary>
@@ -29,5 +39,15 @@ public static class Arrays
         // Remember: Using comments in your program, write down your process for solving this problem
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
+
+        // Step 1: Get the last 'amount' elements
+        List<int> slice = data.GetRange(data.Count - amount, amount);
+
+        // Step 2: Remove these elements from the end
+        data.RemoveRange(data.Count - amount, amount);
+
+        // Step 3: Insert the slice at the beginning
+        data.InsertRange(0, slice);
+
     }
 }

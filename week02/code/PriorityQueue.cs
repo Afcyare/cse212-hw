@@ -1,6 +1,9 @@
 ﻿public class PriorityQueue
 {
     private List<PriorityItem> _queue = new();
+    // Add this Count property
+    public int Count => _queue.Count;
+
 
     /// <summary>
     /// Add a new value to the queue with an associated priority.  The
@@ -24,14 +27,15 @@
 
         // Find the index of the item with the highest priority to remove
         var highPriorityIndex = 0;
-        for (int index = 1; index < _queue.Count - 1; index++)
+        for (int index = 1; index < _queue.Count; index++) // Fixed: index < _queue.Count (not Count - 1)
         {
-            if (_queue[index].Priority >= _queue[highPriorityIndex].Priority)
+            if (_queue[index].Priority > _queue[highPriorityIndex].Priority) //Fixed: > instead of >=
                 highPriorityIndex = index;
         }
 
         // Remove and return the item with the highest priority
         var value = _queue[highPriorityIndex].Value;
+        _queue.RemoveAt(highPriorityIndex); // Fixed: actually remove the item
         return value;
     }
 

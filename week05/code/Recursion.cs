@@ -1,4 +1,5 @@
-using System.Collections;
+using System;
+using System.Collections.Generic;
 
 public static class Recursion
 {
@@ -15,7 +16,12 @@ public static class Recursion
     public static int SumSquaresRecursive(int n)
     {
         // TODO Start Problem 1
-        return 0;
+        // Base Case: if n <= 0, return 0
+        if (n <= 0)
+            return 0;
+
+        // Recursive Case: n^2 + sum of smaller problem
+        return n * n + SumSquaresRecursive(n - 1);
     }
 
     /// <summary>
@@ -40,6 +46,19 @@ public static class Recursion
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
         // TODO Start Problem 2
+        // Base Case: when the current word length equals the desired size
+        if (word.Length == size)
+        {
+            results.Add(word);
+            return;
+        }
+
+        // Recursive Case: try each letter that hasn't been used yet
+        foreach (char c in letters)
+        {
+            string remaining = letters.Replace(c.ToString(), ""); // remove used letter
+            PermutationsChoose(results, remaining, size, word + c);
+        }
     }
 
     /// <summary>
@@ -97,9 +116,22 @@ public static class Recursion
             return 4;
 
         // TODO Start Problem 3
+        // Initialize memo dictionary if not provided
+        if (remember == null)
+            remember = new Dictionary<int, decimal>();
 
-        // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        // Check if we already computed this
+        if (remember.ContainsKey(s))
+            return remember[s];
+
+        // Solve using recursion with memoization
+        decimal ways = CountWaysToClimb(s - 1, remember) +
+                       CountWaysToClimb(s - 2, remember) +
+                       CountWaysToClimb(s - 3, remember);
+
+        // Store result for reuse
+        remember[s] = ways;
+
         return ways;
     }
 
@@ -119,6 +151,20 @@ public static class Recursion
     public static void WildcardBinary(string pattern, List<string> results)
     {
         // TODO Start Problem 4
+        int index = pattern.IndexOf('*');
+
+        // Base Case: no wildcard left
+        if (index == -1)
+        {
+            results.Add(pattern);
+            return;
+        }
+
+        // Replace '*' with '0' and recurse
+        WildcardBinary(pattern[..index] + "0" + pattern[(index + 1)..], results);
+
+        // Replace '*' with '1' and recurse
+        WildcardBinary(pattern[..index] + "1" + pattern[(index + 1)..], results);
     }
 
     /// <summary>
@@ -129,15 +175,41 @@ public static class Recursion
     {
         // If this is the first time running the function, then we need
         // to initialize the currPath list.
-        if (currPath == null) {
+        if (currPath == null)
+        {
             currPath = new List<ValueTuple<int, int>>();
         }
-        
-        // currPath.Add((1,2)); // Use this syntax to add to the current path
 
         // TODO Start Problem 5
-        // ADD CODE HERE
+        // Add current position to path
+        currPath.Add((x, y));
 
-        // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+        // Check if reached the end
+        if (maze.IsEnd(x, y))
+        {
+            results.Add(currPath.AsString());
+            currPath.RemoveAt(currPath.Count - 1); // backtrack
+            return;
+        }
+
+        // Explore all possible directions (right, left, down, up)
+        List<(int, int)> directions = new List<(int, int)>
+        {
+            (x + 1, y), // right
+            (x - 1, y), // left
+            (x, y + 1), // down
+            (x, y - 1)  // up
+        };
+
+        foreach (var (nx, ny) in directions)
+        {
+            if (maze.IsValidMove(currPath, nx, ny))
+            {
+                SolveMaze(results, maze, nx, ny, currPath);
+            }
+        }
+
+        // Backtrack: remove current cell before returning
+        currPath.RemoveAt(currPath.Count - 1);
     }
 }
